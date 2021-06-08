@@ -1,6 +1,7 @@
+import csv
 from datetime import datetime
-
-import requests
+import config_scraper
+from config import original_data_index
 
 
 def is_date(raw_line):
@@ -20,4 +21,56 @@ def is_date(raw_line):
     else:
         return False
 
-print(is_date(['February 09, 2021']))
+
+def process_csv(raw_response):
+    """
+    Takes raw CSV response from the request to the AESO website and parses it into lists.
+
+    Parameters:
+        raw_response: Raw CSV string
+
+    Returns:
+         tuple of lists
+    """
+
+    decoded_response = raw_response.content.decode('utf-8')
+    reader = csv.reader(decoded_response.splitlines(), delimiter=',')
+
+    dates = []
+    closing_prices = []  # 1 list per date consisting of 1 row for that day
+    core_data = []  # 1 list per date consisting of all rows for that day
+
+    closing_price_idx = -1
+    core_data_start_idx = -1
+    reading_core_data = False  # whether we are currently processing core energy data lines
+
+    day_core_data = []  # used to append rows of core data for the date we're currently processing
+
+    for i, row in enumerate(reader):
+        if i == closing_price_idx:  # reached the line that contains closing prices
+            closing_prices.append(row[config_scraper.skip_dashes_idx:])
+        elif i == core_data_start_idx:  # reached the line that has the first row of core data
+            reading_core_data = True
+
+        if len(row) == 0 and reading_core_data:
+            # we've run out of core data to process. There is a blank line ([]) after core data ends.
+            reading_core_data = False
+            core_data.append(day_core_data)
+            day_core_data = []
+            continue
+        elif reading_core_data:  # we're still reading core data
+            assert len(row) == 24 + len(original_data_index), 'Core data row not equal to 24 values for each hour ' \
+                                                              'and 1 for each of ' + original_data_index
+            day_core_data.append(row)
+
+        if is_date(row):
+            # this means the closing prices start in 5 indices and the
+            # energy data starts in 7 indices
+            if config_scraper.print_logs:
+                print('Currently processing', row[0])
+            dates.append(row[0][:-1])  # the :-1 drops the period at the end of date
+
+            closing_price_idx = i + config_scraper.closing_price_idx_jump_fwd
+            core_data_start_idx = i + config_scraper.core_data_idx_jump_fwd
+
+    return dates, closing_prices, core_data
