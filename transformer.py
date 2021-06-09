@@ -83,6 +83,9 @@ def _transform(data: pd.DataFrame, processing_date: str) -> pd.DataFrame:
                                                   (stacked_result[config.hour] <= config.peak_hours_end), 'Peak',
                                                   'Off-Peak')
     stacked_result[config.date] = processing_date
+
+    # HERE: check if processing_date's transformed report exists
+    # if it does, it means we've read that date previously. Load it into Pandas and compare values. Update if required.
     stacked_result[config.last_updated] = datetime.today().strftime('%Y-%m-%d')
 
     # Select desired columns in given order then sort the rows
@@ -112,7 +115,7 @@ def _process_date(day_data: pd.DataFrame, process_date: str, hour_values: List) 
     loaded_data = _load_data_from_list(day_data, hour_values)
 
     filtered_data = _filter_data(loaded_data, filters={
-        'sites': config.desired_sites
+        'sites': config.site_ids
     })
 
     transformed_data = _transform(filtered_data, process_date)

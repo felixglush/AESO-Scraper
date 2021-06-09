@@ -1,4 +1,3 @@
-
 # Columns
 pool_participant_id = 'Pool Participant ID'
 asset_type = 'Asset Type'
@@ -9,7 +8,9 @@ hour_closing_price = 'Hour Closing Price'
 hour = 'Hour'
 energy_unit = 'MWh'
 peak_status = 'Peak Status'
-hours_row = ['Hour 1', 'Hour 2', 'Hour 3', 'Hour 4', 'Hour 5', 'Hour 6', 'Hour 7', 'Hour 8', 'Hour 9', 'Hour 10', 'Hour 11', 'Hour 12', 'Hour 13', 'Hour 14', 'Hour 15', 'Hour 16', 'Hour 17', 'Hour 18', 'Hour 19', 'Hour 20', 'Hour 21', 'Hour 22', 'Hour 23', 'Hour 24']
+hours_row = ['Hour 1', 'Hour 2', 'Hour 3', 'Hour 4', 'Hour 5', 'Hour 6', 'Hour 7', 'Hour 8', 'Hour 9', 'Hour 10',
+             'Hour 11', 'Hour 12', 'Hour 13', 'Hour 14', 'Hour 15', 'Hour 16', 'Hour 17', 'Hour 18', 'Hour 19',
+             'Hour 20', 'Hour 21', 'Hour 22', 'Hour 23', 'Hour 24']
 
 # Choose columns
 original_data_index = [pool_participant_id, asset_type, asset_id]
@@ -39,5 +40,9 @@ Hour Endings:
     Hr 11: 10:00 am - 10:59 am (Peak)
     Hr 12: 11:00 am - 11:59 am (Off-Peak)
 '''
-peak_hours_start = 8 # 7:00 am
-peak_hours_end = 11 # 10:59 am
+peak_hours_start = 8  # 7:00 am
+peak_hours_end = 11  # 10:59 am
+
+save_raw_dataframes_dir = 'pd_ready_reports/'
+save_transformed_dataframes_dir = 'transformed_reports/'
+save_raw_responses_dir = 'raw_reports/'
