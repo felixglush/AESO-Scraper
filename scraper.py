@@ -79,7 +79,7 @@ def process_csv(raw_response):
             # this means the closing prices start in 5 indices and the
             # energy data starts in 7 indices
             if config_scraper.print_logs:
-                print('Currently processing', row[0])
+                print('Currently scraping', row[0])
             dates.append(row[0][:-1])  # the :-1 drops the period at the end of date
 
             closing_price_idx = i + config_scraper.closing_price_idx_jump_fwd

@@ -5,7 +5,6 @@ from typing import List
 
 # my code
 import config
-import os
 
 """
     This file contains functions for transforming the data given lists of the data.
@@ -110,19 +109,28 @@ def _process_last_updated(processing_date: str, stacked_result: pd.DataFrame) ->
         previous_report = pd.read_csv(config.save_transformed_dataframes_dir + processing_date + '.csv',
                                       index_col=False)
 
-        index = [config.asset_id, config.date, config.hour]
-        previous_report = previous_report.set_index(index)  # join works on indices
-        stacked_result_copy = stacked_result_copy.set_index(index)
+        join_index = [config.asset_id, config.date, config.hour]
+        previous_report = previous_report.set_index(join_index)  # join works on indices
+        stacked_result_copy = stacked_result_copy.set_index(join_index)
 
-        # Assumption: additional rows may appear in new data pulls. join on left, where left is the just pulled data.
-        # Rows won't be dropped as they're part of the historical record.
-        stacked_result_copy = stacked_result_copy.join(previous_report['MWh'], how='left', rsuffix='_prev')
+        # Assumption 1: additional rows may appear in new data pulls. join on left, where left is the pulled data.
+        # Assumption 2: Rows won't be dropped as they're part of the historical record.
+
+        right_suffix = '_prev'
+        stacked_result_copy = stacked_result_copy.join(previous_report[[config.energy_unit, config.last_updated]],
+                                                       how='left', rsuffix=right_suffix)
 
         # if the MWh's don't match, this means either it's a new row or the value was updated
+        # otherwise set Last Updated to its previously recorded value.
+        stacked_result_copy[config.energy_unit] = pd.to_numeric(stacked_result_copy[config.energy_unit], errors='coerce')
+        stacked_result_copy[config.energy_unit + right_suffix] = pd.to_numeric(
+            stacked_result_copy[config.energy_unit + right_suffix], errors='coerce')
+
         stacked_result_copy[config.last_updated] = np.where(
-            stacked_result_copy['MWh_prev'] != stacked_result_copy['MWh'],
-            (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d'),
-            previous_report[config.last_updated])
+            np.isclose(stacked_result_copy[config.energy_unit], stacked_result_copy[config.energy_unit + right_suffix]),
+            # stacked_result_copy doesn't have Last Updated_prev because it's queried from AESO and the column hasn't been created
+            stacked_result_copy[config.last_updated],
+            (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d'))
 
     except FileNotFoundError:
         # this date is new. Subtract one day because AESO doesn't report on today until today is over so
