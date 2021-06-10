@@ -16,9 +16,9 @@ hours_row = ['Hour 1', 'Hour 2', 'Hour 3', 'Hour 4', 'Hour 5', 'Hour 6', 'Hour 7
 
 # Choose columns
 original_data_index = [pool_participant_id, asset_type, asset_id]
-columns_in_scrape = [pool_participant_id, asset_type, asset_id] + hours_row
-drop_columns = [pool_participant_id, asset_type, hour_closing_price]
-select_columns = [asset_id, name, date, hour, energy_unit, peak_status, last_updated]
+columns_in_scrape = original_data_index + hours_row
+select_from_query = [asset_id, name, date, hour, energy_unit, peak_status]
+select_columns = select_from_query + [last_updated]
 sort_transform_by = [asset_id, date, hour]
 
 # Filters

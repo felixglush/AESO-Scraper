@@ -87,12 +87,9 @@ def _transform(data: pd.DataFrame, processing_date: str) -> pd.DataFrame:
     stacked_result[config.date] = processing_date
     # stacked_result[config.date] = pd.to_datetime(stacked_result[config.date], format='%B %d, %Y')
 
-    stacked_result = stacked_result.sort_values(config.sort_transform_by).reset_index(drop=True)
+    result = _process_last_updated(processing_date, stacked_result)
 
-    stacked_result = _process_last_updated(processing_date, stacked_result)
-
-    target = stacked_result[config.select_columns]
-    return target
+    return result[config.select_columns]
 
 
 def _process_last_updated(processing_date: str, stacked_result: pd.DataFrame) -> pd.DataFrame:
@@ -106,35 +103,38 @@ def _process_last_updated(processing_date: str, stacked_result: pd.DataFrame) ->
     Returns:
          stacked_result with Last Updated column.
     """
-    # Update "Last Updated" column
+    stacked_result = stacked_result[config.select_from_query]
+    stacked_result_copy = stacked_result.copy()
+
     try:  # after the first run, every run other than the new day will branch to the try block
-        previous_report = pd.read_csv(config.save_transformed_dataframes_dir + processing_date + '.csv')
-        print('previously_read_report')
-        print(previous_report)
+        previous_report = pd.read_csv(config.save_transformed_dataframes_dir + processing_date + '.csv',
+                                      index_col=False)
 
         index = [config.asset_id, config.date, config.hour]
-        previous_report.set_index(index, inplace=True)  # join works on indices
-        stacked_result.set_index(index, inplace=True)
+        previous_report = previous_report.set_index(index)  # join works on indices
+        stacked_result_copy = stacked_result_copy.set_index(index)
+
         # Assumption: additional rows may appear in new data pulls. join on left, where left is the just pulled data.
         # Rows won't be dropped as they're part of the historical record.
-        stacked_result = stacked_result.join(previous_report['MWh'], how='left', rsuffix='_prev')
+        stacked_result_copy = stacked_result_copy.join(previous_report['MWh'], how='left', rsuffix='_prev')
 
         # if the MWh's don't match, this means either it's a new row or the value was updated
-        stacked_result[config.last_updated] = np.where(stacked_result['MWh_prev'] != stacked_result['MWh'],
-                                                       (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d'),
-                                                       stacked_result['Last Updated'])
-        stacked_result.reset_index(drop=True, inplace=True)
+        stacked_result_copy[config.last_updated] = np.where(
+            stacked_result_copy['MWh_prev'] != stacked_result_copy['MWh'],
+            (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d'),
+            previous_report[config.last_updated])
 
     except FileNotFoundError:
         # this date is new. Subtract one day because AESO doesn't report on today until today is over so
         # this value was last updated the day before
-        stacked_result[config.last_updated] = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
-    return stacked_result
+        stacked_result_copy[config.last_updated] = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+
+    return stacked_result_copy.reset_index()
 
 
 def _process_date(day_data: pd.DataFrame, process_date: str, hour_values: List) -> pd.DataFrame:
     """
-    Performs tranformations for a single day. Returns a transformed dataframe for the date
+    Performs transformations for a single day. Returns a transformed dataframe for the date
     that was processed with schema defined by `select_columns`:
     ['Asset ID', 'Date', 'Hour', 'MWh', 'Peak Status', 'Last Updated']
 
@@ -162,13 +162,13 @@ def _process_date(day_data: pd.DataFrame, process_date: str, hour_values: List) 
 
 def process_all_dates(all_data: pd.DataFrame, hour_values: List[List], dates: List) -> pd.DataFrame:
     """
-    Takes in a list of data and dates (parsed from the AESO website) and returns a transformed Pandas DataFrame
-    for all dates with schema defined by `select_columns`: ['Asset ID', 'Date', 'Hour', 'MWh', 'Peak Status', 'Last Updated']
+    Takes in a list of data and dates (parsed from the AESO website) and
+    returns a transformed Pandas DataFrame for all dates.
 
     Parameters:
         all_data (Pandas DataFrame): 1 list per date, each of which consists of a list of rows.
         dates (List): list of dates
-        hour_values (List of lists): the closing prices for each date
+        hour_values (List of lists): the closing prices for each date (current specification drops this later)
 
     Returns:
         Pandas DataFrame
@@ -176,14 +176,24 @@ def process_all_dates(all_data: pd.DataFrame, hour_values: List[List], dates: Li
 
     days = []
     for i, processing_date in enumerate(dates):
+        '''
+        Processes one day at a time, generating files for each day.
+        There are advantages/disadvantages to this:
+        - you don't need to load a large file (say after a couple years of queries) and filter down to 60 days.
+        - or if you wanted 1 file that holds a rolling 60 days of data, don't need to remove rows from the head into 
+            a "old" data file --> some complexity is removed.
+        - small files can be built into an index such as year/month/* which can be fast.
+        - Disk I/O can be problematic with smaller files.
+        
+        Overall, profiling both approaches (large file vs many small files) would be good. 
+        '''
         # Convert from column to row wise data
         target = _process_date(all_data[i], processing_date, hour_values[i])
 
-        # save target
-        target.to_csv(config.save_transformed_dataframes_dir + processing_date + '.csv')
+        # save for record keeping
+        target.to_csv(config.save_transformed_dataframes_dir + processing_date + '.csv', index=False)
 
         # Append the current processing_date's data to the result
-        # resultant_data = pd.concat([resultant_data, target], axis=0).reset_index(drop=True)
         days.append(target)
 
     resultant_data = pd.concat(days, axis=0).reset_index(drop=True)

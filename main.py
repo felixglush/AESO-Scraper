@@ -52,12 +52,11 @@ def run_scrape_transform():
 
         return batches
 
-    contentType = 'csv'
     date_batches = create_date_batches()
     if config_scraper.print_logs:
         print('Date batches', date_batches)
 
-    result = pd.DataFrame(columns=config.select_columns)
+    date_range_batches = []
     for batch in date_batches:
         beginDate, endDate = batch
 
@@ -65,16 +64,18 @@ def run_scrape_transform():
         dates, closing_prices, core_data = make_request(params={
             'beginDate': beginDate,
             'endDate': endDate,
-            'contentType': contentType
+            'contentType': config_scraper.content_type
         })
 
         # transform
         batch_result = transformer.process_all_dates(core_data, closing_prices, dates)
-        result = pd.concat([result, batch_result], axis=0).reset_index(drop=True)
+        date_range_batches.append(batch_result)
 
+    result = pd.concat(date_range_batches, axis=0).reset_index(drop=True)
     result = result.sort_values(config.sort_transform_by)
+    print('\n\nRESULT:')
     print(result)
-
+    print(result.Date.unique())
     # result.to_csv()
 
 

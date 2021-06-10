@@ -11,3 +11,4 @@ print_logs = True
 
 rolling_window_days = 60
 request_batch_size = 30
+content_type = 'csv'  # html not currently supported
