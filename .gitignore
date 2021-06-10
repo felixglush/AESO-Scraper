@@ -1,4 +1,7 @@
 .idea/
+/transformed_reports/
+raw_reports/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
