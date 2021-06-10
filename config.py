@@ -46,6 +46,4 @@ Hour Endings:
 peak_hours_start = 8  # 7:00 am
 peak_hours_end = 11  # 10:59 am
 
-save_raw_dataframes_dir = 'pd_ready_reports/'
 save_transformed_dataframes_dir = 'transformed_reports/'
-save_raw_responses_dir = 'raw_reports/'

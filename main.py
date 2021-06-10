@@ -7,27 +7,14 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 
-def make_request(params):
-    with requests.Session() as s:
-        raw_response = s.get(config_scraper.host + config_scraper.filename, params=params)
-        # save raw response to /raw_reports
-
-        if params['contentType'] == 'csv':
-            dates, closing_prices, core_data = scraper.process_csv(raw_response)
-            return dates, closing_prices, core_data
-        elif params['contentType'] == 'html':
-            print('html contentType currently not supported')
-
-
-def run_scrape_transform():
+def run_scrape_transform() -> pd.DataFrame:
     """
-    Maximum report size supported by AESO is 31 days.
-
-    :return:
+        Main entry point. Runs scraper and transforms the data.
     """
 
     def create_date_batches():
         """
+        Maximum report size supported by AESO is 31 days.
 
         :return: a tuple of start and end date for splitting requests
         """
@@ -45,7 +32,7 @@ def run_scrape_transform():
             batches.append((left_interval_date.strftime('%m%d%Y'), right_interval_date.strftime('%m%d%Y')))
 
             right_interval_date = left_interval_date - timedelta(days=1)
-            if days_querying == 1:  # since 1 was subtracting above
+            if days_querying == 1:  # since 1 was subtracted above
                 left_interval_date = right_interval_date
             else:
                 left_interval_date = left_interval_date - timedelta(days=days_querying)
@@ -57,27 +44,31 @@ def run_scrape_transform():
         print('Date batches', date_batches)
 
     date_range_batches = []
-    for batch in date_batches:
-        beginDate, endDate = batch
+    with requests.Session() as session_obj:
+        for batch in date_batches:
+            beginDate, endDate = batch
 
-        # make request and scrape
-        dates, closing_prices, core_data = make_request(params={
-            'beginDate': beginDate,
-            'endDate': endDate,
-            'contentType': config_scraper.content_type
-        })
+            # make request and scrape
+            dates, closing_prices, core_data = scraper.request_scrape(session_obj,
+                                                                      params={
+                                                                          'beginDate': beginDate,
+                                                                          'endDate': endDate,
+                                                                          'contentType': config_scraper.content_type
+                                                                      })
 
-        # transform
-        batch_result = transformer.process_all_dates(core_data, closing_prices, dates)
-        date_range_batches.append(batch_result)
+            # transform
+            batch_result = transformer.process_all_dates(core_data, closing_prices, dates)
+            date_range_batches.append(batch_result)
 
-    result = pd.concat(date_range_batches, axis=0).reset_index(drop=True)
-    result = result.sort_values(config.sort_transform_by)
-    print('\n\nRESULT:')
-    print(result)
-    print(result.Date.unique())
-    # result.to_csv()
+    final_report = pd.concat(date_range_batches, axis=0).reset_index(drop=True)
+    final_report = transformer.sort_data(final_report)
+
+    return final_report
 
 
 if __name__ == '__main__':
-    run_scrape_transform()
+    report = run_scrape_transform()
+
+    print('\n\nRESULT:')
+    pd.set_option('display.max_columns', None)  # prints all columns
+    print(report)

@@ -4,7 +4,7 @@ import config_scraper
 from config import original_data_index
 
 
-def is_date(raw_line):
+def _is_date(raw_line):
     """
     Checks if date_string satisfies full month name, 0 padded day, full year (i.e. February 09, 2021)
 
@@ -22,7 +22,7 @@ def is_date(raw_line):
         return False
 
 
-def process_csv(raw_response):
+def _process_csv(raw_response):
     """
     Takes raw CSV response from the request to the AESO website and parses it into lists.
 
@@ -75,7 +75,7 @@ def process_csv(raw_response):
                 # print('Check the date currently being processed on AESO. It appears to be missing an hour(s).')
             day_core_data.append(row)
 
-        if is_date(row):
+        if _is_date(row):
             # this means the closing prices start in 5 indices and the
             # energy data starts in 7 indices
             if config_scraper.print_logs:
@@ -86,3 +86,24 @@ def process_csv(raw_response):
             core_data_start_idx = i + config_scraper.core_data_idx_jump_fwd
 
     return dates, all_closing_prices, all_core_data
+
+
+def request_scrape(session_obj, params: dict):
+    """
+    Requests report from AESO and parses the returned file.
+
+    Parameters:
+        session_obj: requests object
+        params: beginDate, endDate and contentType to request from AESO
+    """
+    if config_scraper.print_logs:
+        from_date = datetime.strptime(params["beginDate"], "%m%d%Y").strftime('%B %d, %Y')
+        end_date = datetime.strptime(params["endDate"], "%m%d%Y").strftime('%B %d, %Y')
+        print(f'Requesting report from AESO for: {from_date} to {end_date}')
+    raw_response = session_obj.get(config_scraper.host + config_scraper.filename, params=params)
+
+    if params['contentType'] == 'csv':
+        dates, closing_prices, core_data = _process_csv(raw_response)
+        return dates, closing_prices, core_data
+    elif params['contentType'] == 'html':
+        print('html contentType currently not supported')

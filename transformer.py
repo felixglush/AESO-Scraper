@@ -122,7 +122,8 @@ def _process_last_updated(processing_date: str, stacked_result: pd.DataFrame) ->
 
         # if the MWh's don't match, this means either it's a new row or the value was updated
         # otherwise set Last Updated to its previously recorded value.
-        stacked_result_copy[config.energy_unit] = pd.to_numeric(stacked_result_copy[config.energy_unit], errors='coerce')
+        stacked_result_copy[config.energy_unit] = pd.to_numeric(stacked_result_copy[config.energy_unit],
+                                                                errors='coerce')
         stacked_result_copy[config.energy_unit + right_suffix] = pd.to_numeric(
             stacked_result_copy[config.energy_unit + right_suffix], errors='coerce')
 
@@ -168,6 +169,16 @@ def _process_date(day_data: pd.DataFrame, process_date: str, hour_values: List) 
     return transformed_data
 
 
+def sort_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Sorts the data based on date, which as desired is in a string format (i.e. May 11, 2012).
+    """
+    df[config.date] = pd.to_datetime(df[config.date], format='%B %d, %Y', errors='ignore')
+    df = df.sort_values(config.sort_transform_by)
+    df[config.date] = df[config.date].apply(lambda date: datetime.strftime(date, '%B %d, %Y'))  # desired format
+    return df.reset_index(drop=True)
+
+
 def process_all_dates(all_data: pd.DataFrame, hour_values: List[List], dates: List) -> pd.DataFrame:
     """
     Takes in a list of data and dates (parsed from the AESO website) and
@@ -193,10 +204,12 @@ def process_all_dates(all_data: pd.DataFrame, hour_values: List[List], dates: Li
         - small files can be built into an index such as year/month/* which can be fast.
         - Disk I/O can be problematic with smaller files.
         
-        Overall, profiling both approaches (large file vs many small files) would be good. 
         '''
         # Convert from column to row wise data
         target = _process_date(all_data[i], processing_date, hour_values[i])
+
+        # sort before saving (on Asset ID, Date, Hour)
+        target = sort_data(target)
 
         # save for record keeping
         target.to_csv(config.save_transformed_dataframes_dir + processing_date + '.csv', index=False)
@@ -205,4 +218,7 @@ def process_all_dates(all_data: pd.DataFrame, hour_values: List[List], dates: Li
         days.append(target)
 
     resultant_data = pd.concat(days, axis=0).reset_index(drop=True)
+
     return resultant_data
+
+
