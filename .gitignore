@@ -1,5 +1,5 @@
 .idea/
-transformed_reports/
+/transformed_reports/
 raw_reports/
 
 # Byte-compiled / optimized / DLL files
