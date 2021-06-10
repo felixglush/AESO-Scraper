@@ -1,0 +1,73 @@
+,Asset ID,Name,Date,Hour,MWh,Peak Status,Last Updated
+0,ARD1,Ardenville,"April 17, 2021",1,5.0615,Off-Peak,2021-06-08
+1,ARD1,Ardenville,"April 17, 2021",2,5.0505,Off-Peak,2021-06-08
+2,ARD1,Ardenville,"April 17, 2021",3,4.1465,Off-Peak,2021-06-08
+3,ARD1,Ardenville,"April 17, 2021",4,5.5900,Off-Peak,2021-06-08
+4,ARD1,Ardenville,"April 17, 2021",5,9.2895,Off-Peak,2021-06-08
+5,ARD1,Ardenville,"April 17, 2021",6,13.4750,Off-Peak,2021-06-08
+6,ARD1,Ardenville,"April 17, 2021",7,28.3215,Off-Peak,2021-06-08
+7,ARD1,Ardenville,"April 17, 2021",8,29.7505,Peak,2021-06-08
+8,ARD1,Ardenville,"April 17, 2021",9,18.3870,Peak,2021-06-08
+9,ARD1,Ardenville,"April 17, 2021",10,6.1045,Peak,2021-06-08
+10,ARD1,Ardenville,"April 17, 2021",11,0.0000,Peak,2021-06-08
+11,ARD1,Ardenville,"April 17, 2021",12,0.0000,Off-Peak,2021-06-08
+12,ARD1,Ardenville,"April 17, 2021",13,0.0167,Off-Peak,2021-06-08
+13,ARD1,Ardenville,"April 17, 2021",14,1.2757,Off-Peak,2021-06-08
+14,ARD1,Ardenville,"April 17, 2021",15,1.8985,Off-Peak,2021-06-08
+15,ARD1,Ardenville,"April 17, 2021",16,2.2050,Off-Peak,2021-06-08
+16,ARD1,Ardenville,"April 17, 2021",17,2.1825,Off-Peak,2021-06-08
+17,ARD1,Ardenville,"April 17, 2021",18,0.6255,Off-Peak,2021-06-08
+18,ARD1,Ardenville,"April 17, 2021",19,0.0000,Off-Peak,2021-06-08
+19,ARD1,Ardenville,"April 17, 2021",20,0.0000,Off-Peak,2021-06-08
+20,ARD1,Ardenville,"April 17, 2021",21,0.0000,Off-Peak,2021-06-08
+21,ARD1,Ardenville,"April 17, 2021",22,1.3340,Off-Peak,2021-06-08
+22,ARD1,Ardenville,"April 17, 2021",23,15.4075,Off-Peak,2021-06-08
+23,ARD1,Ardenville,"April 17, 2021",24,15.9150,Off-Peak,2021-06-08
+24,BTR1,Blue Trail,"April 17, 2021",1,7.7440,Off-Peak,2021-06-08
+25,BTR1,Blue Trail,"April 17, 2021",2,8.3200,Off-Peak,2021-06-08
+26,BTR1,Blue Trail,"April 17, 2021",3,10.3680,Off-Peak,2021-06-08
+27,BTR1,Blue Trail,"April 17, 2021",4,14.1440,Off-Peak,2021-06-08
+28,BTR1,Blue Trail,"April 17, 2021",5,14.3360,Off-Peak,2021-06-08
+29,BTR1,Blue Trail,"April 17, 2021",6,20.2240,Off-Peak,2021-06-08
+30,BTR1,Blue Trail,"April 17, 2021",7,29.8240,Off-Peak,2021-06-08
+31,BTR1,Blue Trail,"April 17, 2021",8,22.2080,Peak,2021-06-08
+32,BTR1,Blue Trail,"April 17, 2021",9,4.9920,Peak,2021-06-08
+33,BTR1,Blue Trail,"April 17, 2021",10,0.2200,Peak,2021-06-08
+34,BTR1,Blue Trail,"April 17, 2021",11,0.0000,Peak,2021-06-08
+35,BTR1,Blue Trail,"April 17, 2021",12,0.0000,Off-Peak,2021-06-08
+36,BTR1,Blue Trail,"April 17, 2021",13,0.0000,Off-Peak,2021-06-08
+37,BTR1,Blue Trail,"April 17, 2021",14,0.1705,Off-Peak,2021-06-08
+38,BTR1,Blue Trail,"April 17, 2021",15,0.9560,Off-Peak,2021-06-08
+39,BTR1,Blue Trail,"April 17, 2021",16,0.8930,Off-Peak,2021-06-08
+40,BTR1,Blue Trail,"April 17, 2021",17,4.0320,Off-Peak,2021-06-08
+41,BTR1,Blue Trail,"April 17, 2021",18,0.2090,Off-Peak,2021-06-08
+42,BTR1,Blue Trail,"April 17, 2021",19,0.0000,Off-Peak,2021-06-08
+43,BTR1,Blue Trail,"April 17, 2021",20,0.0000,Off-Peak,2021-06-08
+44,BTR1,Blue Trail,"April 17, 2021",21,0.0000,Off-Peak,2021-06-08
+45,BTR1,Blue Trail,"April 17, 2021",22,2.4195,Off-Peak,2021-06-08
+46,BTR1,Blue Trail,"April 17, 2021",23,0.8580,Off-Peak,2021-06-08
+47,BTR1,Blue Trail,"April 17, 2021",24,1.9840,Off-Peak,2021-06-08
+48,VQ6,Waterton,"April 17, 2021",1,0.2591,Off-Peak,2021-06-08
+49,VQ6,Waterton,"April 17, 2021",2,0.3227,Off-Peak,2021-06-08
+50,VQ6,Waterton,"April 17, 2021",3,0.3869,Off-Peak,2021-06-08
+51,VQ6,Waterton,"April 17, 2021",4,0.3986,Off-Peak,2021-06-08
+52,VQ6,Waterton,"April 17, 2021",5,0.3885,Off-Peak,2021-06-08
+53,VQ6,Waterton,"April 17, 2021",6,0.3740,Off-Peak,2021-06-08
+54,VQ6,Waterton,"April 17, 2021",7,0.4204,Off-Peak,2021-06-08
+55,VQ6,Waterton,"April 17, 2021",8,0.3834,Peak,2021-06-08
+56,VQ6,Waterton,"April 17, 2021",9,0.2238,Peak,2021-06-08
+57,VQ6,Waterton,"April 17, 2021",10,0.0553,Peak,2021-06-08
+58,VQ6,Waterton,"April 17, 2021",11,0.0023,Peak,2021-06-08
+59,VQ6,Waterton,"April 17, 2021",12,0.0000,Off-Peak,2021-06-08
+60,VQ6,Waterton,"April 17, 2021",13,0.0458,Off-Peak,2021-06-08
+61,VQ6,Waterton,"April 17, 2021",14,0.0784,Off-Peak,2021-06-08
+62,VQ6,Waterton,"April 17, 2021",15,0.0078,Off-Peak,2021-06-08
+63,VQ6,Waterton,"April 17, 2021",16,0.0343,Off-Peak,2021-06-08
+64,VQ6,Waterton,"April 17, 2021",17,0.0040,Off-Peak,2021-06-08
+65,VQ6,Waterton,"April 17, 2021",18,0.0001,Off-Peak,2021-06-08
+66,VQ6,Waterton,"April 17, 2021",19,0.0000,Off-Peak,2021-06-08
+67,VQ6,Waterton,"April 17, 2021",20,0.0529,Off-Peak,2021-06-08
+68,VQ6,Waterton,"April 17, 2021",21,0.0676,Off-Peak,2021-06-08
+69,VQ6,Waterton,"April 17, 2021",22,0.0001,Off-Peak,2021-06-08
+70,VQ6,Waterton,"April 17, 2021",23,0.0082,Off-Peak,2021-06-08
+71,VQ6,Waterton,"April 17, 2021",24,0.0764,Off-Peak,2021-06-08

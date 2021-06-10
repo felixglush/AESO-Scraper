@@ -61,7 +61,6 @@ def run_scrape_transform():
     for batch in date_batches:
         beginDate, endDate = batch
 
-
         # make request and scrape
         dates, closing_prices, core_data = make_request(params={
             'beginDate': beginDate,
@@ -76,8 +75,8 @@ def run_scrape_transform():
     result = result.sort_values(config.sort_transform_by)
     print(result)
 
-    # save if new or update values if changed
-    result.to_csv()
+    # result.to_csv()
+
 
 if __name__ == '__main__':
     run_scrape_transform()

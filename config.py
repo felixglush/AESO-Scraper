@@ -1,4 +1,5 @@
-# Columns
+from collections import defaultdict
+
 pool_participant_id = 'Pool Participant ID'
 asset_type = 'Asset Type'
 asset_id = 'Asset ID'
@@ -8,6 +9,7 @@ hour_closing_price = 'Hour Closing Price'
 hour = 'Hour'
 energy_unit = 'MWh'
 peak_status = 'Peak Status'
+name = 'Name'
 hours_row = ['Hour 1', 'Hour 2', 'Hour 3', 'Hour 4', 'Hour 5', 'Hour 6', 'Hour 7', 'Hour 8', 'Hour 9', 'Hour 10',
              'Hour 11', 'Hour 12', 'Hour 13', 'Hour 14', 'Hour 15', 'Hour 16', 'Hour 17', 'Hour 18', 'Hour 19',
              'Hour 20', 'Hour 21', 'Hour 22', 'Hour 23', 'Hour 24']
@@ -16,15 +18,16 @@ hours_row = ['Hour 1', 'Hour 2', 'Hour 3', 'Hour 4', 'Hour 5', 'Hour 6', 'Hour 7
 original_data_index = [pool_participant_id, asset_type, asset_id]
 columns_in_scrape = [pool_participant_id, asset_type, asset_id] + hours_row
 drop_columns = [pool_participant_id, asset_type, hour_closing_price]
-select_columns = [asset_id, date, hour, energy_unit, peak_status, last_updated]
+select_columns = [asset_id, name, date, hour, energy_unit, peak_status, last_updated]
 sort_transform_by = [asset_id, date, hour]
 
 # Filters
-desired_sites = ['941A', '941C']
-sites_to_extract = {'VQ6': 'Waterton',
-                    'ARD1': 'Ardenville',
-                    'BTR1': 'Blue Trail'}
-site_ids = sites_to_extract.keys()
+# desired_sites = ['941A', '941C'] # testing purposes with fake data
+sites_to_extract_map = defaultdict(lambda: 'Unknown')
+sites_to_extract_map['VQ6'] = 'Waterton'
+sites_to_extract_map['ARD1'] = 'Ardenville'
+sites_to_extract_map['BTR1'] = 'Blue Trail'
+site_ids = sites_to_extract_map.keys()
 
 '''
 Peak hours: 7 am - 11 am
